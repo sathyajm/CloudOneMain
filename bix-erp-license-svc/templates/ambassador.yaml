@@ -1,0 +1,24 @@
+{{- $scheme := required "service.scheme is required"  .Values.service.scheme -}}
+{{- $fullName := include "app.fullname" . -}}
+{{- $labels := include "app.labels" . -}}
+
+{{- range $id, $amb:= .Values.ambassador }}
+{{- if $amb.enabled -}}
+{{- $req := printf "Value for ambassador.%s.domain is required" $id  -}}
+{{- $domain := required $req $amb.domain -}}
+{{- $name := printf "%s-%s" $fullName $id  }}
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: {{ $name }}
+  labels:
+{{ include "app.labels" $ | indent 4 }}
+spec:
+  ambassador_id: {{ $id }}
+  prefix: {{ $amb.prefix | default '/' }}
+  host: {{ printf "%s-%s.%s" $fullName $.Release.Namespace $domain | quote }}
+  service: {{ printf "%s://%s:%s" $scheme $fullName ( $.Values.service.port | toString ) | quote}}
+  weight: {{ $.Values.ambassador.traffic.weight | default 100 }}
+{{- end }}
+{{- end }}

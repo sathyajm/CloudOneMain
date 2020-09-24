@@ -1,0 +1,31 @@
+{{- if .Values.route.enabled -}}
+{{- $fullName := include "app.fullname" . -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ $fullName }}
+  labels:
+{{ include "app.labels" . | indent 4 }}
+  annotations:
+{{ include "app.annotation" . | indent 4 }}
+spec:
+  port:
+    targetPort: {{ .Values.service.connectionName }}
+  to:
+    kind: Service
+    name: {{ $fullName }}
+    weight: 100
+{{- if .Values.route.hostname }}
+  host: {{ .Values.route.hostname | quote }}
+  tls:
+    termination: edge
+      {{ (.Files.Glob "tls/*").AsConfig | nindent 4 }}
+{{ else }}
+  host: ''
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+{{- end }}
+status:
+  ingress: []
+{{- end }}

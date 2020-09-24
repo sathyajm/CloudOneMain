@@ -1,0 +1,45 @@
+name: $(SourceBranchName)_$(BuildID)
+trigger: none
+resources:
+  repositories:
+  - { repository: templates, type: git, name: devexp-engg/automation, ref: release/v3.6 }
+extends:
+  template: pipeline/springboot/init.yml@templates
+  parameters:
+    appVersion: 3.6.4
+    jdkVersion: 'jdk11'
+    # workspace:
+    #   helm:
+    #     overrideFiles: |
+    #       bix-erp-license-svc/values.workspace.yaml
+    # hostspaces:
+    #   devint:
+    #   - spacename: devexp-stg-2
+    #     ref: st2
+    #   stage:
+    #   - spacename: devexp-stg-1
+    #     k8s: devexp-stg-1
+    #     ref: st1
+    #     # canary:
+    #     #   increments: [25,50]
+    #     #   promote: "auto"
+    #     #   pauseInMinutes: 1
+    #     helm:
+    #       overrideFiles: |
+    #         bix-erp-license-svc/values.hostspace.yaml
+    #   prod:
+    #   - spacename: devexp-prd-1
+    #     helm:
+    #       overrideFiles: |
+    #         bix-erp-license-svc/values.hostspace.yaml
+    #     ref: prd1
+    #     dependsOn:
+    #     - st1
+    #   - spacename: devexp-prd-2
+    #     ref: prd2
+    #     dependsOn:
+    #     - st2
+    #     helm:
+    #       overrideFiles: |
+    #         bix-erp-license-svc/values.hostspace.yaml
+#NT3

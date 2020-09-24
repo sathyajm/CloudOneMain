@@ -1,0 +1,11 @@
+ambassador:
+  traffic:
+    weight: 100
+  internal:
+    enabled: true
+    prefix: /
+    domain: prdXXi.cloudone.netapp.com 
+  external:
+    enabled: true
+    prefix: /
+    domain: prdXXe.cloudone.netapp.com 

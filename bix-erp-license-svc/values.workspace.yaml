@@ -1,0 +1,14 @@
+route:
+  enabled: true
+
+replicaCount: 1
+
+ambassador:
+  internal:
+    enabled: true
+    prefix: /
+    domain:
+  external:
+    enabled: true
+    prefix: /
+    domain:

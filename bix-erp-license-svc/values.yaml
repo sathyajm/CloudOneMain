@@ -1,0 +1,83 @@
+global:
+  app: 'springboot'
+
+replicaCount: 1
+
+route:
+  hostname:
+  enabled: false
+
+ambassador:
+  internal:
+    enabled: true
+    prefix: /
+    domain:
+  external:
+    enabled: false
+    prefix: /
+    domain:
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 128Mi
+#######################################################################################################
+############################ - Be sure you know what you change below - ###############################
+
+build:
+  number: 'build-number'
+  uri: 'build-uri'
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+nameOverride: ""
+fullnameOverride: ""
+app:
+  code: bix
+  version: initial
+
+image:
+  tag: "redhat-openjdk-18/openjdk18-openshift"
+  pullPolicy: Always
+
+service:
+  connectionName: springboot
+  type: ClusterIP
+  port: 8080
+  protocol: TCP
+  scheme: http
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: springboot
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: springboot
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+
+ingress:
+  enabled: false
+  annotations: {}
+  path: /
+  hosts: 
+    - repo-xyz.io
+  tls: []
+############################ - Be sure you know what you change above - ###############################
+#######################################################################################################

@@ -1,0 +1,16 @@
+server:
+  port: 8080
+  tomcat: 
+    accesslog:
+      pattern: '%h %l %u %t "%r" %s %b "%{Referer}i" "%{User-Agent}i" "%{X-Forwarded-For}i"' 
+      # Pattern conforms to security team guidelines, consult with security and splunk team standards. 
+      # Consult with splunk team for any pattern change
+      directory: '${ACCESS_LOG:/tmp/access}'
+      enabled: true
+      rotate: false
+
+logging:
+  pattern:
+    console: '[%date{ISO8601}] logLevel=%level pid=${PID:-} thread=%thread class=%logger{40} message="%msg"%n'
+    # Pattern conforms to security team guidelines, consult with security and splunk team standards. 
+    # Log pattern can be extended for additional fields by using key=value inserted before message field
