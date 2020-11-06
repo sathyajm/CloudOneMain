@@ -30,7 +30,7 @@ public class LicenseKeyController {
 	@Autowired
 	RestTemplate restTemplate;
 
-	@RequestMapping(value="/licensekey",method = RequestMethod.POST)
+	@RequestMapping(value="/getlicensekey",method = RequestMethod.POST)
 	public  Map<String, Object>   checkLogin(@RequestBody LicenseKeyService licenseKeyService) {
 		
 		if(licenseKeyService.getKeyType().equals("TEMP") || licenseKeyService.getKeyType().equals("PERM")) {
