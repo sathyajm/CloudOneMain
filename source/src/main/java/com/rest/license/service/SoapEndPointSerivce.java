@@ -28,22 +28,20 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.rest.license.model.LicenseKey;
+import com.rest.license.model.LicenseKeyOutput;
+
 @Service
 public class SoapEndPointSerivce {
 	public String SOAP_END_POINT_URL = "http://soadev1.corp.netapp.com:9009/LicenseKeyRequestor_OSB/ProxyService/LicenseKeyRequestorToBPEL?wsdl";
 	
-	public String genderateLicense(LicenseKeyService licenseKeyService) {
+	public String getLicenceDetailsFromSOA(LicenseKey licenseKeyIn) {
 		
 		   final ResponseEntity<String>  response;
-			
 
-			 String xmlString = "";
+   		   String xmlString = "";
 		
-			 if(licenseKeyService.getKeyType().equals("TEMP")) {
-				 
-//				 System.out.println("tempkey");
-//				 System.out.println(loginService.getKeyType());
-				 
+		   if(licenseKeyIn.getKeyType().equals("TEMP")) {
 				  xmlString = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:lic=\"http://www.netapp.com/schemas/LicenseKeyCanonical\" xmlns:meta=\"http://www.netapp.com/schemas/Meta\">\r\n"
 							+ "   <soapenv:Header/>\r\n"
 							+ "   <soapenv:Body>\r\n"
@@ -68,9 +66,9 @@ public class SoapEndPointSerivce {
 							+ "         <lkc:DataArea>\r\n"
 							+ "            <lkc:Action xmlns=\"http://www.netapp.com/schemas/Meta\">NEW</lkc:Action>\r\n"
 							+ "            <lkc:LicenseKeyCanonical>\r\n"
-							+ "               <lkc:KeyType>"+licenseKeyService.getKeyType()+"</lkc:KeyType>\r\n"
-							+ "               <lkc:KeyVersion>"+licenseKeyService.getKeyVersion()+"</lkc:KeyVersion>\r\n"
-							+ "               <lkc:KeyProtocol>"+licenseKeyService.getKeyProtocol()+"</lkc:KeyProtocol>\r\n"
+							+ "               <lkc:KeyType>"+licenseKeyIn.getKeyType()+"</lkc:KeyType>\r\n"
+							+ "               <lkc:KeyVersion>"+licenseKeyIn.getKeyVersion()+"</lkc:KeyVersion>\r\n"
+							+ "               <lkc:KeyProtocol>"+licenseKeyIn.getKeyProtocol()+"</lkc:KeyProtocol>\r\n"
 							+ "            </lkc:LicenseKeyCanonical>\r\n"
 							+ "         </lkc:DataArea>\r\n"
 							+ "      </lkc:GenerateLicenseKeyRequest>\r\n"
@@ -78,7 +76,7 @@ public class SoapEndPointSerivce {
 							+ "</soapenv:Envelope>";
 			 }
 			 
-			 if(licenseKeyService.getKeyType().equals("PERM")) {
+			 if(licenseKeyIn.getKeyType().equals("PERM")) {
 				  xmlString = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:lic=\"http://www.netapp.com/schemas/LicenseKeyCanonical\" xmlns:meta=\"http://www.netapp.com/schemas/Meta\">   <soapenv:Header/>\r\n"
 				  		+ "<soapenv:Body>\r\n"
 				  		+ "<GenerateLicenseKeyRequest xmlns=\"http://www.netapp.com/schemas/LicenseKeyCanonical\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n"
@@ -89,11 +87,11 @@ public class SoapEndPointSerivce {
 				  		+ "				<Name>INTEGRATION</Name>\r\n"
 				  		+ "			</Target>\r\n"
 				  		+ "		</Targets>\r\n"
-				  		+ "		<ApplicationTransactionId AppName=\"OTP\">CME_"+licenseKeyService.getHardwareSerialNumber()+"_08312018143539</ApplicationTransactionId>\r\n"
+				  		+ "		<ApplicationTransactionId AppName=\"OTP\">CME_"+licenseKeyIn.getHardwareSerialNumber()+"_08312018143539</ApplicationTransactionId>\r\n"
 				  		+ "		<BizObjectList>\r\n"
 				  		+ "			<BizObject>\r\n"
 				  		+ "				<Name>KEYGENERATIONREQUEST</Name>\r\n"
-				  		+ "				<Value>CME_"+licenseKeyService.getHardwareSerialNumber()+"_08312018143539</Value>\r\n"
+				  		+ "				<Value>CME_"+licenseKeyIn.getHardwareSerialNumber()+"_08312018143539</Value>\r\n"
 				  		+ "			</BizObject>\r\n"
 				  		+ "		</BizObjectList>\r\n"
 				  		+ "		<DocumentType>Request</DocumentType>\r\n"
@@ -101,11 +99,11 @@ public class SoapEndPointSerivce {
 				  		+ "	<DataArea>\r\n"
 				  		+ "		<Action xmlns=\"http://www.netapp.com/schemas/Meta\">NEW</Action>\r\n"
 				  		+ "		<LicenseKeyCanonical>\r\n"
-				  		+ "			<HardwareSerialNumber>"+licenseKeyService.getHardwareSerialNumber()+"</HardwareSerialNumber>\r\n"
+				  		+ "			<HardwareSerialNumber>"+licenseKeyIn.getHardwareSerialNumber()+"</HardwareSerialNumber>\r\n"
 				  		+ "			<OldSerialNumber/>\r\n"
-				  		+ "			<SONumber>"+licenseKeyService.getsONumber()+"</SONumber>\r\n"
-				  		+ "			<SOLineNumber>"+licenseKeyService.getsOLineNumber()+"</SOLineNumber>\r\n"
-				  		+ "			<KeyType>"+licenseKeyService.getKeyType()+"</KeyType>\r\n"
+				  		+ "			<SONumber>"+licenseKeyIn.getsONumber()+"</SONumber>\r\n"
+				  		+ "			<SOLineNumber>"+licenseKeyIn.getsOLineNumber()+"</SOLineNumber>\r\n"
+				  		+ "			<KeyType>"+licenseKeyIn.getKeyType()+"</KeyType>\r\n"
 				  		+ "		</LicenseKeyCanonical>\r\n"
 				  		+ "	</DataArea>\r\n"
 				  		+ "</GenerateLicenseKeyRequest>   \r\n"
@@ -137,54 +135,71 @@ public class SoapEndPointSerivce {
 	     }
   	 	
 	}
+
+//	public  Map<String, Object> xmlStringtodocParser(String xml)  throws ParserConfigurationException, SAXException, IOException {
+//		  DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+//	         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+//	         Document document = docBuilder.parse(new InputSource(new StringReader(xml)));
+//	         String KeyGenLicenseSerialNumber = document.getElementsByTagName("ns0:KeyGenLicenseSerialNumber").item(0).getTextContent();   
+//		      String LicenseKey = document.getElementsByTagName("ns0:LicenseKey").item(0).getTextContent();   
+//		      String LicenseExpiryDate = document.getElementsByTagName("ns0:LicenseExpiryDate").item(0).getTextContent();  
+//		      String Protocol = document.getElementsByTagName("ns0:Protocol").item(0).getTextContent(); 
+//		      HashMap<String, Object> map = new HashMap<>();
+//		      map.put("KeyGenLicenseSerialNumber", KeyGenLicenseSerialNumber);
+//		      map.put("LicenseKey", LicenseKey);
+//		      map.put("Protocol", Protocol);
+//		      map.put("LicenseExpiryDate", LicenseExpiryDate);
+//			  map.put("Message", "Success");
+//		      return map;
+//	
+//	}
 	
-	public  Map<String, Object> xmlStringtodocParser(String xml)  throws ParserConfigurationException, SAXException, IOException {
+	public  LicenseKeyOutput getTempLicenseKeyObject(String xml)  throws ParserConfigurationException, SAXException, IOException {
 		  DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 	         Document document = docBuilder.parse(new InputSource(new StringReader(xml)));
 	         String KeyGenLicenseSerialNumber = document.getElementsByTagName("ns0:KeyGenLicenseSerialNumber").item(0).getTextContent();   
-		      String LicenseKey = document.getElementsByTagName("ns0:LicenseKey").item(0).getTextContent();   
-		      String LicenseExpiryDate = document.getElementsByTagName("ns0:LicenseExpiryDate").item(0).getTextContent();  
-		      String Protocol = document.getElementsByTagName("ns0:Protocol").item(0).getTextContent(); 
-		      HashMap<String, Object> map = new HashMap<>();
-		      map.put("KeyGenLicenseSerialNumber", KeyGenLicenseSerialNumber);
-		      map.put("LicenseKey", LicenseKey);
-		      map.put("Protocol", Protocol);
-		      map.put("LicenseExpiryDate", LicenseExpiryDate);
-			  map.put("Message", "Success");
-		      return map;
+     	     String LicenseKey = document.getElementsByTagName("ns0:LicenseKey").item(0).getTextContent();   
+		     String LicenseExpiryDate = document.getElementsByTagName("ns0:LicenseExpiryDate").item(0).getTextContent();  
+		     String Protocol = document.getElementsByTagName("ns0:Protocol").item(0).getTextContent(); 
+		      
+		     LicenseKeyOutput licenseKeyOutput=new LicenseKeyOutput(); 
+	      
+		     licenseKeyOutput.setKeyGenLicenseSerialNumber(KeyGenLicenseSerialNumber);
+		     licenseKeyOutput.setLicenseKey(LicenseKey);
+		     licenseKeyOutput.setProtocol(Protocol);
+		     licenseKeyOutput.setLicenseExpiryDate(LicenseExpiryDate);
+		     return licenseKeyOutput;
 	
 	}
 	
-	public  List<Map<String , String>> xmlPermStringtodocParser(String xml)  throws ParserConfigurationException, SAXException, IOException {
+	public  List<LicenseKeyOutput> getPermLicenseKeyObject(String xml)  throws ParserConfigurationException, SAXException, IOException {
 		  DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 	         Document document = docBuilder.parse(new InputSource(new StringReader(xml)));
 	         NodeList nl = document.getElementsByTagName("ns0:Line");
-	         List<Map<String, String>> datax = new ArrayList<>();
+	         List<LicenseKeyOutput> licenseKeyOutput = new ArrayList<>();
 	         int length = nl.getLength();
 	         String LicenseSerialNumber;
 	         String KeyGenLicenseSerialNumber;
 	         String LicenseKey;
 	         String AccessKeyID;
-	         List<Map<String , String>> permKeyArray  = new ArrayList<Map<String,String>>();
-	     
 	         for (int i=0; i<length; i++) {
-	             Map<String,String> permKeyObj = new HashMap<String, String>();
-	             Element node = (Element) nl.item(i);
-	              LicenseSerialNumber = node.getElementsByTagName("ns0:LicenseSerialNumber").item(0).getTextContent();
+	              Map<String,String> permKeyObj = new HashMap<String, String>();
+	              Element node = (Element) nl.item(i);
+                  LicenseSerialNumber = node.getElementsByTagName("ns0:LicenseSerialNumber").item(0).getTextContent();
 	              KeyGenLicenseSerialNumber = node.getElementsByTagName("ns0:KeyGenLicenseSerialNumber").item(0).getTextContent();
 	              LicenseKey = node.getElementsByTagName("ns0:LicenseKey").item(0).getTextContent();
 	              AccessKeyID = node.getElementsByTagName("ns0:AccessKeyID").item(0).getTextContent();
-	              permKeyObj.put("LicenseSerialNumber", LicenseSerialNumber);
-	              permKeyObj.put("KeyGenLicenseSerialNumber", KeyGenLicenseSerialNumber);
-	              permKeyObj.put("LicenseKey", LicenseKey);
-	              permKeyObj.put("AccessKeyID", AccessKeyID);
-	              permKeyArray.add(i,permKeyObj);
-	            
+	              LicenseKeyOutput licenseKeyOutputObj=new LicenseKeyOutput(); 
+	              licenseKeyOutputObj.setKeyGenLicenseSerialNumber(LicenseSerialNumber);
+	              licenseKeyOutputObj.setLicenseKey(LicenseKey);
+	              licenseKeyOutputObj.setKeyGenLicenseSerialNumber(KeyGenLicenseSerialNumber);
+	              licenseKeyOutputObj.setAccessKeyId(AccessKeyID);
+	              licenseKeyOutput.add(licenseKeyOutputObj);
 	         }
 	         
-	         return permKeyArray;
+	         return licenseKeyOutput;
 		   
 	}	
 }
